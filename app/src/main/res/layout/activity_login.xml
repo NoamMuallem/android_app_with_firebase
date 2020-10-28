@@ -23,12 +23,13 @@
         android:id="@+id/login_txf_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:layout_above="@+id/login_txf_password">
+        >
         <EditText
             android:id="@+id/login_edt_email"
             android:inputType="textEmailAddress"
             android:hint="Email"
+            android:layout_marginBottom="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -38,15 +39,13 @@
         android:id="@+id/login_txf_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         app:passwordToggleEnabled="true"
-        android:layout_below="@+id/login_txf_email">
+        android:layout_above="@+id/login_btn_submit">
         <EditText
             android:id="@+id/login_edt_password"
             android:inputType="textPassword"
             android:hint="Password"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -55,13 +54,14 @@
     <Button
         android:id="@+id/login_btn_submit"
         android:text="Login"
-        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
         android:background="@color/colorPrimary"
         android:textColor="@color/colorWhite"
         android:layout_centerHorizontal="true"
+        android:textSize="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_txf_password"
+        android:layout_above="@+id/login_lbl_password_recovery"
         android:drawableLeft="@drawable/login" />
 
     <!--Show dialog to recover password-->
@@ -69,13 +69,23 @@
         android:id="@+id/login_lbl_password_recovery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
         android:textAlignment="center"
         android:text="Forgot your password?"
         android:textColor="@color/colorBlack"
         android:textSize="15dp"
-        android:layout_below="@+id/login_btn_submit"
+        android:layout_above="@+id/login_btn_google_login"
         android:gravity="center_horizontal" />
+
+<!--    google login-->
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/login_btn_google_login"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:layout_above="@id/login_lbl_noAccount">
+    </com.google.android.gms.common.SignInButton>
 
 
     <!--    TextView: Click go to register activity-->

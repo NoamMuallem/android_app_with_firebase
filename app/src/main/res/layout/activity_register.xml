@@ -23,8 +23,7 @@
         android:id="@+id/register_txf_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:layout_above="@+id/register_txf_password">
         <EditText
             android:id="@+id/register_edt_email"
             android:inputType="textEmailAddress"
@@ -33,15 +32,14 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-<!--    EditTest: Password Input-->
+    <!--    EditTest: Password Input-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/register_txf_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        app:passwordToggleEnabled="true"
-        android:layout_below="@+id/register_txf_email">
+        >
         <EditText
             android:id="@+id/register_edt_password"
             android:inputType="textPassword"
@@ -58,11 +56,13 @@
         android:layout_marginTop="10dp"
         android:background="@color/colorPrimary"
         android:textColor="@color/colorWhite"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/register_txf_password"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/register_txf_password"
         android:drawableLeft="@drawable/register" />
+
+
 
     <!--    TextView: Click go to login activity-->
     <TextView
@@ -72,8 +72,8 @@
         android:text="Already have an account? Login"
         android:textAlignment="center"
         android:gravity="center_horizontal"
-        android:layout_below="@+id/register_btn_submit"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
         android:textColor="@color/colorBlack"/>
 
 </RelativeLayout>
