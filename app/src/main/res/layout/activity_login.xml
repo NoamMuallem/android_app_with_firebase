@@ -26,6 +26,7 @@
         android:layout_above="@+id/login_txf_password">
         >
         <EditText
+            android:background="@color/colorWhite"
             android:id="@+id/login_edt_email"
             android:inputType="textEmailAddress"
             android:hint="Email"
@@ -42,6 +43,7 @@
         app:passwordToggleEnabled="true"
         android:layout_above="@+id/login_btn_submit">
         <EditText
+            android:background="@color/colorWhite"
             android:id="@+id/login_edt_password"
             android:inputType="textPassword"
             android:hint="Password"

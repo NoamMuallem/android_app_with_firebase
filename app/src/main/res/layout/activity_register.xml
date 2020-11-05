@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/register_txf_password">
         <EditText
+            android:background="@color/colorWhite"
             android:id="@+id/register_edt_email"
             android:inputType="textEmailAddress"
             android:hint="Email"
@@ -46,6 +47,7 @@
             android:hint="Password"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
+            android:background="@color/colorWhite"
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 

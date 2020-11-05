@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -28,12 +27,15 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -220,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
                             pd.dismiss();
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                             finish();
                         } else {
                             //dismiss progress dialog
@@ -281,8 +283,12 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
+                            //if signning in for the first time - save user data
+                            if(task.getResult().getAdditionalUserInfo().isNewUser()){
+                                saveUserDataToDatabase(user);
+                            }
                             //go to profile account
-                            startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -296,5 +302,27 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void saveUserDataToDatabase(FirebaseUser user) {
+        //get user email and uid from auth
+        String email = user.getEmail();
+        String uid = user.getUid();
+        //when user register tore user info in firebase realtime database too
+        //sing HashMap
+        HashMap<Object, String> hashMap = new HashMap<>();
+        //put info in hash map
+        hashMap.put("email", email);
+        hashMap.put("uid", uid);
+        hashMap.put("name", ""); //will add later (e.g. edit profile)
+        hashMap.put("phone", user.getPhoneNumber()+""); //will add later (e.g. edit profile)
+        hashMap.put("image", user.getPhotoUrl()+""); //will add later (e.g. edit profile)
+        hashMap.put("cover", ""); //will add later (e.g. edit profile)
+        //firebase database instance
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //path to store user data named "Users"
+        DatabaseReference reference = database.getReference("Users");
+        //put data within hashMap in database
+        reference.child(uid).setValue(hashMap);
     }
 }
