@@ -37,7 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
-public class LoginActivity extends AppCompatActivity {
+public class ActivityLogin extends AppCompatActivity {
 
     //for google sign in
     private static final int RC_SIGN_IN = 100;
@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         login_lbl_noAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
+                startActivity(new Intent(ActivityLogin.this, ActivityRegister.class));
                 finish();
             }
         });
@@ -194,9 +194,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 pd.dismiss();
                 if(task.isSuccessful()){
-                    Toast.makeText(LoginActivity.this,"Email sent",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivityLogin.this,"Email sent",Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(LoginActivity.this,"Failed to send Email",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivityLogin.this,"Failed to send Email",Toast.LENGTH_SHORT).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -204,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 pd.dismiss();
                 //get and show proper error massage
-                Toast.makeText(LoginActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityLogin.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -222,13 +222,13 @@ public class LoginActivity extends AppCompatActivity {
                             pd.dismiss();
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            startActivity(new Intent(ActivityLogin.this, ActivityDashboard.class));
                             finish();
                         } else {
                             //dismiss progress dialog
                             pd.dismiss();
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(ActivityLogin.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -238,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {
                 //dismiss progress dialog
                 pd.dismiss();
                 //error, get error and display it
-                Toast.makeText(LoginActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityLogin.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -288,18 +288,18 @@ public class LoginActivity extends AppCompatActivity {
                                 saveUserDataToDatabase(user);
                             }
                             //go to profile account
-                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            startActivity(new Intent(ActivityLogin.this, ActivityDashboard.class));
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this,"Login Failed...",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActivityLogin.this,"Login Failed...",Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 //get and show error
-                Toast.makeText(LoginActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityLogin.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }

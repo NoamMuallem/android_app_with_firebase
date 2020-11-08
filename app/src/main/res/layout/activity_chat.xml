@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F1EDED"
+    tools:context=".ActivityChat">
+    
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chat_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimaryDark"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+<!--        receiver profile picture-->
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/char_imv_receiver_avatar"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_default_image_white"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="20dp"
+            android:gravity="center"
+            android:layout_marginLeft="20dp">
+<!--            receiver name-->
+            <TextView
+                android:id="@+id/chat_lbl_receiver_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+<!--            receiver status i.e. online/ offline-->
+            <TextView
+                android:id="@+id/chat_lbl_receiver_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Online"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+<!--    RecyclerView-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chat_recycler_view"
+        android:layout_below="@+id/chat_toolbar"
+        android:layout_above="@+id/chat_lil_input_and_send"/>
+<!--send msg edit text and button in layout-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chat_lil_input_and_send"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorWhite"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+<!--edit text for msg input-->
+         <EditText
+             android:id="@+id/chat_edt_msg"
+             android:layout_width="0dp"
+             android:inputType="textCapSentences|textMultiLine"
+             android:layout_height="wrap_content"
+             android:layout_weight="1"
+             android:background="@null"
+             android:hint="Start Typing"
+             android:padding="15dp"
+             />
+        <ImageButton
+            android:id="@+id/chat_btn_send_msg"
+            android:background="@null"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_send_primary"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

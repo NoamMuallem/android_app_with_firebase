@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
-public class RegisterActivity extends AppCompatActivity {
+public class ActivityRegister extends AppCompatActivity {
 
     //views
     EditText register_edt_email, register_edt_password;
@@ -90,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
         register_lbl_haveAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                startActivity(new Intent(ActivityRegister.this, ActivityLogin.class));
                 finish();
             }
         });
@@ -108,13 +108,13 @@ public class RegisterActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                             FirebaseUser user = mAuth.getCurrentUser();
                             saveUserDataToDatabase(user);
-                            Toast.makeText(RegisterActivity.this,"Registered...\n" + user.getEmail(),Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
+                            Toast.makeText(ActivityRegister.this,"Registered...\n" + user.getEmail(),Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(ActivityRegister.this, ActivityDashboard.class));
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             progressDialog.dismiss();
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                            Toast.makeText(ActivityRegister.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -123,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 //error, dismiss progress dialog and get and show the error massage
                 progressDialog.dismiss();
-                Toast.makeText(RegisterActivity.this,""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityRegister.this,""+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

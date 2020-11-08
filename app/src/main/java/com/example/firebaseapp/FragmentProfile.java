@@ -12,7 +12,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -20,6 +19,9 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -46,14 +48,13 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
-import java.util.jar.Pack200;
 
 import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileFragment extends Fragment {
+public class FragmentProfile extends Fragment {
 
     //firebase
     FirebaseAuth firebaseAuth;
@@ -87,7 +88,7 @@ public class ProfileFragment extends Fragment {
     String profileOrCoverPhoto;
 
     //required public empty constructor
-    public ProfileFragment() {
+    public FragmentProfile() {
     }
 
     @Override
@@ -495,5 +496,46 @@ public class ProfileFragment extends Fragment {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
+    }
+
+    //to show menu option in fragment
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    private void checkUserStatus(){
+        //get current user
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if(user != null){
+            //user sign in - stay here
+
+
+        }else{
+            //user is not sign in, go to main activity
+            startActivity(new Intent(getActivity(), ActivityMain.class));
+            getActivity().finish();
+        }
+    }
+
+    //inflate options menu
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //inflating menu
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    //handle menu items clicks
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //get item id
+        int id = item.getItemId();
+        if(id == R.id.menue_item_logout){
+            firebaseAuth.signOut();
+            checkUserStatus();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
