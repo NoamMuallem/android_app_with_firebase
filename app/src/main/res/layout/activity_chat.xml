@@ -44,7 +44,6 @@
                 android:id="@+id/chat_lbl_receiver_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Online"
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold"/>
         </LinearLayout>

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,8 +33,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ActivityChat extends AppCompatActivity {
 
@@ -52,9 +55,8 @@ public class ActivityChat extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser fUser; //will contain current user
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userDBRef; //will contain receiver data
+    private DatabaseReference userDBRef; //use to indicate msg is seen
     private ValueEventListener seenListener; //for checking is user seen msg
-    private DatabaseReference refForSeen;
 
     List<ModelChat> chatList;
     AdapterChat adapterChat;
@@ -96,7 +98,20 @@ public class ActivityChat extends AppCompatActivity {
                     //get data
                     String name = ""+ds.child("name").getValue();
                     receiverImage = ""+ds.child("image").getValue();
+                    //get value of online status
+                    String onlineStatus = ""+ds.child("onlineStatus").getValue();
+
                     //set data
+                    if(onlineStatus.equals("online")){
+                        chat_lbl_receiver_status.setText(onlineStatus);
+                    }else{
+                        //convert timestamp to proper time date
+                        //convert timestamp to dd/mm/yyyy hh:mm am/pm
+                        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+                        cal.setTimeInMillis(Long.parseLong(onlineStatus));
+                        String dateTime = DateFormat.format("dd/mm/yyyy hh:mm aa", cal).toString();
+                        chat_lbl_receiver_status.setText("Last seen at: " + dateTime);
+                    }
                     chat_lbl_receiver_name.setText(name);
                     try{
                         //image received set it to image view in toolbar
@@ -169,6 +184,11 @@ public class ActivityChat extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        //get timestamp
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        //set offline with last seen timestamp
+        checkOnlineStatus(timestamp);
+
         //is the user is not currently in the app, don't update
         //seen on sent msg
         userDBRef.removeEventListener(seenListener);
@@ -232,6 +252,15 @@ public class ActivityChat extends AppCompatActivity {
         chat_lbl_receiver_status = findViewById(R.id.chat_lbl_receiver_status);
         chat_edt_msg = findViewById(R.id.chat_edt_msg);
         chat_btn_send_msg = findViewById(R.id.chat_btn_send_msg);
+        chat_lbl_receiver_status = findViewById(R.id.chat_lbl_receiver_status);
+    }
+
+    private void checkOnlineStatus(String status){
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("onlineStatus", status);
+        //update value of online in current user
+        dbRef.updateChildren(hashMap);
     }
 
     private void checkUserStatus(){
@@ -248,6 +277,8 @@ public class ActivityChat extends AppCompatActivity {
     @Override
     protected void onStart() {
         checkUserStatus();
+        //set user online
+        checkOnlineStatus("online");
         super.onStart();
     }
 
@@ -270,5 +301,12 @@ public class ActivityChat extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        //set user online
+        checkOnlineStatus("online");
+        super.onResume();
     }
 }

@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:passwordToggleEnabled="true"
-        android:layout_above="@+id/login_btn_submit">
+        android:layout_centerInParent="true">
         <EditText
             android:background="@color/colorWhite"
             android:id="@+id/login_edt_password"
@@ -52,43 +52,43 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--    Button: Register User-->
-    <Button
-        android:id="@+id/login_btn_submit"
-        android:text="Login"
-        android:layout_marginBottom="10dp"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/colorWhite"
-        android:layout_centerHorizontal="true"
-        android:textSize="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/login_lbl_password_recovery"
-        android:drawableLeft="@drawable/login" />
 
-    <!--Show dialog to recover password-->
-    <TextView
-        android:id="@+id/login_lbl_password_recovery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:textAlignment="center"
-        android:text="Forgot your password?"
-        android:textColor="@color/colorBlack"
-        android:textSize="15dp"
-        android:layout_above="@+id/login_btn_google_login"
-        android:gravity="center_horizontal" />
+            <!--    Button: Register User-->
+            <Button
+                android:id="@+id/login_btn_submit"
+                android:text="Login"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/colorWhite"
+                android:layout_below="@+id/login_txf_password"
+                android:layout_centerInParent="true"
+                android:textSize="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/login"/>
 
-<!--    google login-->
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/login_btn_google_login"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:layout_above="@id/login_lbl_noAccount">
-    </com.google.android.gms.common.SignInButton>
+            <!--Show dialog to recover password-->
+            <TextView
+                android:id="@+id/login_lbl_password_recovery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textAlignment="center"
+                android:text="Forgot your password?"
+                android:textColor="@color/colorBlack"
+                android:textSize="15dp"
+                android:layout_below="@id/login_btn_submit"
+                android:gravity="center_horizontal" />
 
+        <!--    google login-->
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/login_btn_google_login"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:layout_above="@+id/login_lbl_noAccount"
+            />
 
     <!--    TextView: Click go to register activity-->
     <TextView
