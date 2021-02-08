@@ -1,4 +1,4 @@
-package com.example.firebaseapp;
+package com.example.firebaseapp.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -10,6 +10,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.firebaseapp.Fragments.FragmentChatList;
+import com.example.firebaseapp.Fragments.FragmentHome;
+import com.example.firebaseapp.Fragments.FragmentProfile;
+import com.example.firebaseapp.Fragments.FragmentUsers;
+import com.example.firebaseapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

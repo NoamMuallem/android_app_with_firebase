@@ -7,12 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.firebaseapp.ActivityChat;
+import com.example.firebaseapp.Activitys.ActivityChat;
 import com.example.firebaseapp.R;
 import com.example.firebaseapp.models.ModelUser;
 import com.squareup.picasso.Picasso;

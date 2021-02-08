@@ -1,4 +1,4 @@
-package com.example.firebaseapp;
+package com.example.firebaseapp.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -30,6 +30,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.firebaseapp.Activitys.ActivityMain;
+import com.example.firebaseapp.R;
+import com.example.firebaseapp.utils.FirebaseManager;
+import com.example.firebaseapp.utils.PermissionManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -50,22 +54,9 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.firebaseapp.utils.PermissionManager.IMAGE_PICK_CAMERA_CODE;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class FragmentProfile extends Fragment {
-
-    //firebase
-    FirebaseAuth firebaseAuth;
-    FirebaseUser firebaseUser;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    //storage
-    StorageReference storageReference;
-    //path here user profile picture and cover photo will be stored
-    String storagePath = "Users_Profile_And_Cover_Images/";
-
     //views
     ImageView profile_imv_avatar, profile_imv_cover_photo;
     TextView profile_lbl_user_name, profile_lbl_user_email, profile_lbl_user_phone;
@@ -74,18 +65,8 @@ public class FragmentProfile extends Fragment {
     //progress dialog
     ProgressDialog pd;
 
-    //permission constance
-    private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int STORAGE_REQUEST_CODE = 200;
-    private static final int IMAGE_PICK_GALLERY_CODE = 300;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
-    //arrays of permissions to be requested
-    String cameraPermissions[];
-    String storagePermissions[];
-    //uri for picked image
-    private Uri image_uri;
     //to indicate change in profile picture or cover photo so we can use one handler for both
-    String profileOrCoverPhoto;
+    private String profileOrCoverPhoto;
 
     //required public empty constructor
     public FragmentProfile() {
@@ -96,18 +77,10 @@ public class FragmentProfile extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        firebaseInit();
         findViews(view);
         initViews();
         updateViewsWithProfileData();
-        initPermissionsArray();
         return view;
-    }
-
-    //********************************initialization
-    private void initPermissionsArray() {
-        cameraPermissions = new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE};
     }
 
     private void findViews(View view) {
@@ -129,20 +102,9 @@ public class FragmentProfile extends Fragment {
         });
     }
 
-    private void firebaseInit() {
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        //where in bucket users are stored
-        databaseReference = firebaseDatabase.getReference("Users");
-        storageReference = FirebaseStorage.getInstance().getReference();//firebase storage reference
-    }
-
     //fetching info of current user by id
     private void updateViewsWithProfileData() {
-        //using orderByChild query to get user that have uid that machs the current user uid
-        Query query = databaseReference.orderByChild("uid").equalTo(firebaseUser.getUid());
-        query.addValueEventListener(new ValueEventListener() {
+        FirebaseManager.getInstance().getUsersReference().orderByChild("uid").equalTo(FirebaseManager.getInstance().getMAuth().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //checks until required data is back
@@ -153,7 +115,6 @@ public class FragmentProfile extends Fragment {
                     String phone = "" + ds.child("phone").getValue();
                     String image = "" + ds.child("image").getValue();
                     String cover = "" + ds.child("cover").getValue();
-
                     //set data
                     profile_lbl_user_name.setText(name);
                     profile_lbl_user_email.setText(email);
@@ -184,30 +145,6 @@ public class FragmentProfile extends Fragment {
 
             }
         });
-    }
-
-    //*********************************permissions
-    //check if storage permissions is enabled or not
-    private boolean checkStoragePermissions(){
-        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result;
-    }
-
-    //request runtime storage permission
-    private void requestStoragePermission(){
-        requestPermissions(storagePermissions, STORAGE_REQUEST_CODE);
-    }
-
-    //check if storage permissions is enabled or not
-    private boolean checkCameraPermissions(){
-        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    //request runtime storage permission
-    private void requestCameraPermission(){
-        requestPermissions(cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
     //********************************profile editing
@@ -282,7 +219,7 @@ public class FragmentProfile extends Fragment {
                     pd.show();
                     HashMap<String, Object> result = new HashMap<>();
                     result.put(key.toLowerCase(), value);
-                    databaseReference.child(firebaseUser.getUid()).updateChildren(result).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    FirebaseManager.getInstance().getUsersReference().child(FirebaseManager.getInstance().getMAuth().getUid()).updateChildren(result).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             pd.dismiss();
@@ -327,8 +264,8 @@ public class FragmentProfile extends Fragment {
                 switch(which){
                     case 0: {
                         //Take a photo
-                        if (!checkCameraPermissions()) {
-                            requestCameraPermission();
+                        if (!PermissionManager.getInstance().checkCameraPermissions()) {
+                            PermissionManager.getInstance().requestCameraPermission(getActivity());
                             Log.d("pttt", "premission dinaied to take a photo");
                         } else {
                             Log.d("pttt", "premission granted to take a photo");
@@ -338,8 +275,8 @@ public class FragmentProfile extends Fragment {
                     break;
                     case 1: {
                         //Choose from gallery
-                        if (!checkStoragePermissions()) {
-                            requestStoragePermission();
+                        if (!PermissionManager.getInstance().checkStoragePermissions()) {
+                            PermissionManager.getInstance().requestStoragePermission(getActivity());
                             Log.d("pttt", "premission denaied to choose from storage");
                         } else {
                             Log.d("pttt", "premission granted to choose from storage");
@@ -360,14 +297,14 @@ public class FragmentProfile extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
-            if(requestCode == IMAGE_PICK_GALLERY_CODE){
+            if(requestCode == PermissionManager.getInstance().getImagePickGalleryCode()){
                 //image picked from gallery - get uri of image
-                image_uri = data.getData();
-                uploadProfileCoverPhoto(image_uri);
+                PermissionManager.getInstance().setImage_uri(data.getData());
+                uploadProfileCoverPhoto(PermissionManager.getInstance().getImage_uri());
             }
-            if(requestCode == IMAGE_PICK_CAMERA_CODE){
+            if(requestCode == PermissionManager.getInstance().getImagePickCameraCode()){
                 //image picked from camera - get uri of image
-                uploadProfileCoverPhoto(image_uri);
+                uploadProfileCoverPhoto(PermissionManager.getInstance().getImage_uri());
             }
         }
     }
@@ -381,11 +318,9 @@ public class FragmentProfile extends Fragment {
         //examples for imagePathAndName:
         //Users_Profile_And_Cover_Images_image_052982309840
         //Users_Profile_And_Cover_Images_cover_052982309840
-        String imagePathAndName = storagePath + "_" + profileOrCoverPhoto + "_" + firebaseUser.getUid();
+        String imagePathAndName = FirebaseManager.getInstance().getStoragePath() + "_" + profileOrCoverPhoto + "_" + FirebaseManager.getInstance().getMAuth().getUid();
         //creating new cluster in storage with the specified path
-        StorageReference storageReference2nd = storageReference.child(imagePathAndName);
-        //saving the image on to it
-        storageReference2nd.putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        FirebaseManager.getInstance().getStorageReference().child(imagePathAndName).putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 //image was uploaded to storage - now get url and store it in Users database
@@ -402,7 +337,7 @@ public class FragmentProfile extends Fragment {
                     //second parameter is the url string
                     result.put(profileOrCoverPhoto,uri.toString());
                     //the first reference that points to Users - get user that matches firebaseUser uid
-                    databaseReference.child(firebaseUser.getUid()).updateChildren(result).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    FirebaseManager.getInstance().getUsersReference().child(FirebaseManager.getInstance().getMAuth().getUid()).updateChildren(result).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             //url of image stored in Users realtime database successfully - dismiss progress bar
@@ -444,8 +379,7 @@ public class FragmentProfile extends Fragment {
             Log.d("pttt",""+grantResults[i]);
         }
         switch(requestCode){
-            case CAMERA_REQUEST_CODE:{
-                //TODO:fix permission issiues
+            case PermissionManager.CAMERA_REQUEST_CODE:{
                 //picking from camera - check we have permissions
                 if(grantResults.length > 0){
                     boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
@@ -460,7 +394,7 @@ public class FragmentProfile extends Fragment {
                 }
             }
             break;
-            case STORAGE_REQUEST_CODE:{
+            case PermissionManager.STORAGE_REQUEST_CODE:{
                 //picking from gallery - check we have permissions
                 if(grantResults.length > 0){
                     boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
@@ -483,19 +417,19 @@ public class FragmentProfile extends Fragment {
         values.put(MediaStore.Images.Media.TITLE, "Temp Pic");
         values.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
         //put image uri
-        image_uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        PermissionManager.getInstance().setImage_uri(getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values));
 
         //intent to start camera
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, PermissionManager.getInstance().getImage_uri());
+        startActivityForResult(cameraIntent, PermissionManager.IMAGE_PICK_CAMERA_CODE);
     }
 
     //pick image from gallery
     private void pickFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
         galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
+        startActivityForResult(galleryIntent, PermissionManager.IMAGE_PICK_GALLERY_CODE);
     }
 
     //to show menu option in fragment
@@ -505,13 +439,12 @@ public class FragmentProfile extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    //redirect user if he is here and not sign in
     private void checkUserStatus(){
         //get current user
-        FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseUser user = FirebaseManager.getInstance().getMAuth().getCurrentUser();
         if(user != null){
             //user sign in - stay here
-
-
         }else{
             //user is not sign in, go to main activity
             startActivity(new Intent(getActivity(), ActivityMain.class));
@@ -533,7 +466,7 @@ public class FragmentProfile extends Fragment {
         //get item id
         int id = item.getItemId();
         if(id == R.id.menue_item_logout){
-            firebaseAuth.signOut();
+            FirebaseManager.getInstance().getMAuth().signOut();
             checkUserStatus();
         }
         return super.onOptionsItemSelected(item);

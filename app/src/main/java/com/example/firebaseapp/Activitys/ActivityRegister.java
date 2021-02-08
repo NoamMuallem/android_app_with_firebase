@@ -1,9 +1,8 @@
-package com.example.firebaseapp;
+package com.example.firebaseapp.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.TaskStackBuilder;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,14 +14,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.firebaseapp.R;
+import com.example.firebaseapp.utils.FirebaseManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
@@ -35,10 +33,6 @@ public class ActivityRegister extends AppCompatActivity {
 
     //progressbar toto display while registering a user
     ProgressDialog progressDialog;
-
-    //Declare an instance of FirebaseAuth
-    private FirebaseAuth mAuth;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +54,6 @@ public class ActivityRegister extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Registering new user...");
-
-        //initialize the FirebaseAuth instance.
-        mAuth = FirebaseAuth.getInstance();
 
         //handle register button click
         register_btn_submit.setOnClickListener(new View.OnClickListener() {
@@ -99,14 +90,14 @@ public class ActivityRegister extends AppCompatActivity {
     private void registerUser(String email, String password) {
         //email and password are valis show progressDialog and start register user
         progressDialog.show();
-        mAuth.createUserWithEmailAndPassword(email, password)
+        FirebaseManager.getInstance().getMAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, dismiss dialog and tart register activity
                             progressDialog.dismiss();
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = FirebaseManager.getInstance().getMAuth().getCurrentUser();
                             saveUserDataToDatabase(user);
                             Toast.makeText(ActivityRegister.this,"Registered...\n" + user.getEmail(),Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(ActivityRegister.this, ActivityDashboard.class));
@@ -143,12 +134,9 @@ public class ActivityRegister extends AppCompatActivity {
         hashMap.put("phone", ""); //will add later (e.g. edit profile)
         hashMap.put("image", ""); //will add later (e.g. edit profile)
         hashMap.put("cover", ""); //will add later (e.g. edit profile)
-        //firebase database instance
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        //path to store user data named "Users"
-        DatabaseReference reference = database.getReference("Users");
+
         //put data within hashMap in database
-        reference.child(uid).setValue(hashMap);
+        FirebaseManager.getInstance().getUsersReference().child(uid).setValue(hashMap);
     }
 
     @Override

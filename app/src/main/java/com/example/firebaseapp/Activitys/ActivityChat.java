@@ -1,4 +1,4 @@
-package com.example.firebaseapp;
+package com.example.firebaseapp.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.firebaseapp.R;
 import com.example.firebaseapp.adapters.AdapterChat;
 import com.example.firebaseapp.models.ModelChat;
 import com.google.firebase.auth.FirebaseAuth;

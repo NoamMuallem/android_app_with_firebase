@@ -1,4 +1,4 @@
-package com.example.firebaseapp;
+package com.example.firebaseapp.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.firebaseapp.Activitys.ActivityMain;
+import com.example.firebaseapp.R;
 import com.example.firebaseapp.adapters.AdapterUser;
 import com.example.firebaseapp.models.ModelUser;
 import com.google.firebase.auth.FirebaseAuth;

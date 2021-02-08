@@ -1,4 +1,4 @@
-package com.example.firebaseapp;
+package com.example.firebaseapp.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.firebaseapp.R;
+import com.example.firebaseapp.utils.FirebaseManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -39,18 +41,11 @@ import java.util.HashMap;
 
 public class ActivityLogin extends AppCompatActivity {
 
-    //for google sign in
-    private static final int RC_SIGN_IN = 100;
-    GoogleSignInClient mGoogleSignInClient;
-
     //views
     EditText login_edt_email, login_edt_password;
     Button login_btn_submit;
     TextView login_lbl_noAccount, login_lbl_password_recovery;
     SignInButton login_btn_google_login;
-
-    //Declare an instance of FirebaseAuth
-    private FirebaseAuth mAuth;
 
     //progress dialog for loading
     ProgressDialog pd;
@@ -66,17 +61,6 @@ public class ActivityLogin extends AppCompatActivity {
         //enable back button
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
-
-        // Configure Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        //initialize the FirebaseAuth instance.
-        mAuth = FirebaseAuth.getInstance();
 
         //init
         login_edt_email = findViewById(R.id.login_edt_email);
@@ -102,8 +86,8 @@ public class ActivityLogin extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //begin google sign in
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
+                Intent signInIntent = FirebaseManager.getInstance().getmGoogleSignInClient().getSignInIntent();
+                startActivityForResult(signInIntent, FirebaseManager.getInstance().getRcSignIn());
             }
         });
 
@@ -189,7 +173,7 @@ public class ActivityLogin extends AppCompatActivity {
         //show progress dialog
         pd.setMessage("Sending email...");
         pd.show();
-        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+        FirebaseManager.getInstance().getMAuth().sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 pd.dismiss();
@@ -213,7 +197,7 @@ public class ActivityLogin extends AppCompatActivity {
         //show progress dialog
         pd.setMessage("Logging In...");
         pd.show();
-        mAuth.signInWithEmailAndPassword(email, password)
+        FirebaseManager.getInstance().getMAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -221,7 +205,7 @@ public class ActivityLogin extends AppCompatActivity {
                             //dismiss progress dialog
                             pd.dismiss();
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = FirebaseManager.getInstance().getMAuth().getCurrentUser();
                             startActivity(new Intent(ActivityLogin.this, ActivityDashboard.class));
                             finish();
                         } else {
@@ -247,7 +231,7 @@ public class ActivityLogin extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = FirebaseManager.getInstance().getMAuth().getCurrentUser();
     }
 
     @Override
@@ -259,9 +243,8 @@ public class ActivityLogin extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == FirebaseManager.getInstance().getRcSignIn()) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -276,13 +259,13 @@ public class ActivityLogin extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
+        FirebaseManager.getInstance().getMAuth().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = FirebaseManager.getInstance().getMAuth().getCurrentUser();
                             //if signning in for the first time - save user data
                             if(task.getResult().getAdditionalUserInfo().isNewUser()){
                                 saveUserDataToDatabase(user);
@@ -319,11 +302,8 @@ public class ActivityLogin extends AppCompatActivity {
         hashMap.put("phone", user.getPhoneNumber()+""); //will add later (e.g. edit profile)
         hashMap.put("image", user.getPhotoUrl()+""); //will add later (e.g. edit profile)
         hashMap.put("cover", ""); //will add later (e.g. edit profile)
-        //firebase database instance
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        //path to store user data named "Users"
-        DatabaseReference reference = database.getReference("Users");
+
         //put data within hashMap in database
-        reference.child(uid).setValue(hashMap);
+        FirebaseManager.getInstance().getUsersReference().child(uid).setValue(hashMap);
     }
 }
