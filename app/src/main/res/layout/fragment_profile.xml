@@ -8,6 +8,7 @@
     tools:context=".Fragments.FragmentProfile">
 
     <ScrollView
+        android:id="@+id/profile_scv_cover_and_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -84,15 +85,51 @@
 
     </ScrollView>
 
-<!--floating action button-->
-<com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:id="@+id/profile_fab_edit_profile"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/ic_edit_white"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
-    android:layout_margin="10dp"
-    app:tint="@null"/>
+    <LinearLayout
+        android:layout_below="@+id/profile_scv_cover_and_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/profile_txv_this_date"
+            android:layout_width="match_parent"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/profile_txv_total_hours"
+            android:layout_width="match_parent"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+            <LinearLayout
+                android:id="@+id/profile_lil_shift_list"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <!--floating action button-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/profile_fab_edit_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_edit_white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        app:tint="@null"/>
 </RelativeLayout>

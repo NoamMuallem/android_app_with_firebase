@@ -27,13 +27,17 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.firebaseapp.Activitys.ActivityMain;
+import com.example.firebaseapp.Consts.SPConst;
 import com.example.firebaseapp.R;
+import com.example.firebaseapp.models.ModelShift;
 import com.example.firebaseapp.utils.FirebaseManager;
 import com.example.firebaseapp.utils.PermissionManager;
+import com.example.firebaseapp.utils.SP;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,6 +55,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
@@ -59,8 +68,9 @@ import static com.example.firebaseapp.utils.PermissionManager.IMAGE_PICK_CAMERA_
 public class FragmentProfile extends Fragment {
     //views
     ImageView profile_imv_avatar, profile_imv_cover_photo;
-    TextView profile_lbl_user_name, profile_lbl_user_email, profile_lbl_user_phone;
+    TextView profile_lbl_user_name, profile_lbl_user_email, profile_lbl_user_phone,profile_txv_this_date, profile_txv_total_hours;
     FloatingActionButton profile_fab_edit_profile;
+    LinearLayout profile_lil_shift_list;
 
     //progress dialog
     ProgressDialog pd;
@@ -72,6 +82,12 @@ public class FragmentProfile extends Fragment {
     public FragmentProfile() {
     }
 
+    //today shift array
+    ArrayList<ModelShift> shifts;
+
+    //view for adding text views problematically for each entry for today
+    View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,17 +96,21 @@ public class FragmentProfile extends Fragment {
         findViews(view);
         initViews();
         updateViewsWithProfileData();
+        this.view = view;
         return view;
     }
 
     private void findViews(View view) {
-        profile_imv_avatar = view.findViewById(R.id.profile_imv_avatar);
-        profile_lbl_user_name = view.findViewById(R.id.profile_lbl_user_name);
-        profile_lbl_user_email = view.findViewById(R.id.profile_lbl_user_email);
-        profile_lbl_user_phone = view.findViewById(R.id.profile_lbl_user_phone);
-        profile_imv_cover_photo = view.findViewById(R.id.profile_imv_cover_photo);
-        profile_fab_edit_profile = view.findViewById(R.id.profile_fab_edit_profile);
-        pd = new ProgressDialog(getActivity());
+        this.profile_imv_avatar = view.findViewById(R.id.profile_imv_avatar);
+        this.profile_lbl_user_name = view.findViewById(R.id.profile_lbl_user_name);
+        this.profile_lbl_user_email = view.findViewById(R.id.profile_lbl_user_email);
+        this.profile_lbl_user_phone = view.findViewById(R.id.profile_lbl_user_phone);
+        this.profile_imv_cover_photo = view.findViewById(R.id.profile_imv_cover_photo);
+        this.profile_fab_edit_profile = view.findViewById(R.id.profile_fab_edit_profile);
+        this.profile_txv_this_date = view.findViewById(R.id.profile_txv_this_date);
+        this.profile_txv_total_hours = view.findViewById(R.id.profile_txv_total_hours);
+        this.profile_lil_shift_list = view.findViewById(R.id.profile_lil_shift_list);
+        this.pd = new ProgressDialog(getActivity());
     }
 
     private void initViews() {
@@ -100,9 +120,10 @@ public class FragmentProfile extends Fragment {
                 showEditProfileDialog();
             }
         });
+        this.profile_txv_this_date.setText(new SimpleDateFormat("dd/MM/yy").format(Calendar.getInstance().getTime()));
     }
 
-    //fetching info of current user by id
+    //fetching info of current user and all day shifts by id
     private void updateViewsWithProfileData() {
         FirebaseManager.getInstance().getUsersReference().orderByChild("uid").equalTo(FirebaseManager.getInstance().getMAuth().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -115,6 +136,8 @@ public class FragmentProfile extends Fragment {
                     String phone = "" + ds.child("phone").getValue();
                     String image = "" + ds.child("image").getValue();
                     String cover = "" + ds.child("cover").getValue();
+                    //saving to SP the check in value
+                    SP.getInstance().putString(SPConst.checkin,(String)ds.child("openClock").getValue().toString());
                     //set data
                     profile_lbl_user_name.setText(name);
                     profile_lbl_user_email.setText(email);
@@ -145,6 +168,44 @@ public class FragmentProfile extends Fragment {
 
             }
         });
+        //fetching all timestamp keys in "userHistory" that are bigger from last midnight
+        //get last midnight timestamp
+        Calendar c = new GregorianCalendar();
+        c.set(Calendar.HOUR_OF_DAY, 0); //anything 0 - 23
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        Date d1 = c.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        FirebaseManager.getInstance().getUserHistoryRefrence().child(FirebaseManager.getInstance().getMAuth().getUid()).orderByKey().startAt(d1.getTime()+"").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                shifts = new ArrayList<>();
+                for(DataSnapshot ds : snapshot.getChildren()) {
+                    //create list of objects of starting date, end date and
+                    if(!ds.getKey().isEmpty() || !ds.getValue().toString().isEmpty()){
+                        ModelShift shift = new ModelShift(ds.getKey(),ds.getValue().toString());
+                        shifts.add(shift);
+                        TextView tv = new TextView(view.getContext());
+                        tv.setTextSize(16);
+                        tv.setText(sdf.format(shift.getStart()) + " - " + sdf.format(shift.getEnds()) + ": " + shift.getTotal());
+                        tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        profile_lil_shift_list.addView(tv);
+                    }
+                }
+                //formatting the total hours to string format with starting 0 if the time is lower then 10
+                String HoursStr = ModelShift.getTotalHours() < 10 ? "0"+ModelShift.getTotalHours() : ModelShift.getTotalHours()+"";
+                String MinutesStr = ModelShift.getTotalMinutes() < 10 ? "0"+ModelShift.getTotalMinutes() : ModelShift.getTotalMinutes()+"";
+                String SecondsStr = ModelShift.getTotalSeconds() < 10 ? "0"+ModelShift.getTotalSeconds() : ModelShift.getTotalSeconds()+"";
+                profile_txv_total_hours.setText("Total: " + HoursStr+":"+MinutesStr+":"+SecondsStr);
+                //reset total counter
+                ModelShift.resetTotal();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     //********************************profile editing
@@ -168,26 +229,26 @@ public class FragmentProfile extends Fragment {
                         profileOrCoverPhoto = "image"; //indicate profile picture change
                         showImagePicDialog();
                     }
-                        break;
+                    break;
                     case 1: {
                         //edit cover photo clicked
                         pd.setMessage("Updating Profile Cover Photo");
                         profileOrCoverPhoto = "cover"; //indicate cover photo change
                         showImagePicDialog();
                     }
-                        break;
+                    break;
                     case 2: {
                         //edit profile name clicked
                         pd.setMessage("Updating Profile Name");
                         showNamePhoneUpdateDialog("Name");
                     }
-                        break;
+                    break;
                     case 3: {
                         //edit phone clicked
                         pd.setMessage("Updating Profile Phone");
                         showNamePhoneUpdateDialog("Phone");
                     }
-                        break;
+                    break;
                 }
             }
         });
@@ -348,7 +409,7 @@ public class FragmentProfile extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             //error adding url to realtime database for user - dismiss progressbar
-                             pd.dismiss();
+                            pd.dismiss();
                             Toast.makeText(getActivity(),"error updating image...",Toast.LENGTH_SHORT).show();
 
                         }

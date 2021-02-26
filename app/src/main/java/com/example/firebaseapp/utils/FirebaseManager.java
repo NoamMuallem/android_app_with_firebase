@@ -20,6 +20,7 @@ public class FirebaseManager {
     //firebase realtime database
     private FirebaseDatabase database;
     private DatabaseReference usersReference;
+    private DatabaseReference userHistoryRefrence;
     //sign in with google
     private GoogleSignInClient mGoogleSignInClient;
     //request code for google sign in activity
@@ -44,6 +45,7 @@ public class FirebaseManager {
         this.mAuth = FirebaseAuth.getInstance();
         this.database = FirebaseDatabase.getInstance();
         this.usersReference = this.database.getReference("Users");
+        this.userHistoryRefrence = this.database.getReference("UserHistory");
         this.gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(this.context.getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -73,7 +75,11 @@ public class FirebaseManager {
     }
 
     public DatabaseReference getUsersReference() {
-        return usersReference;
+        return this.usersReference;
+    }
+
+    public DatabaseReference getUserHistoryRefrence() {
+        return this.userHistoryRefrence;
     }
 
     public GoogleSignInClient getmGoogleSignInClient() {

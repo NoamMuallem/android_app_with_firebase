@@ -297,11 +297,11 @@ public class ActivityLogin extends AppCompatActivity {
         //put info in hash map
         hashMap.put("email", email);
         hashMap.put("uid", uid);
-        hashMap.put("onlineStatus", String.valueOf(System.currentTimeMillis()));
         hashMap.put("name", ""); //will add later (e.g. edit profile)
         hashMap.put("phone", user.getPhoneNumber()+""); //will add later (e.g. edit profile)
         hashMap.put("image", user.getPhotoUrl()+""); //will add later (e.g. edit profile)
         hashMap.put("cover", ""); //will add later (e.g. edit profile)
+        hashMap.put("openClock", ""); //will add later (e.g. edit profile)
 
         //put data within hashMap in database
         FirebaseManager.getInstance().getUsersReference().child(uid).setValue(hashMap);

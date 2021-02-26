@@ -10,10 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.example.firebaseapp.Fragments.FragmentChatList;
-import com.example.firebaseapp.Fragments.FragmentHome;
+import com.example.firebaseapp.Fragments.FragmentCheckin;
 import com.example.firebaseapp.Fragments.FragmentProfile;
-import com.example.firebaseapp.Fragments.FragmentUsers;
+import com.example.firebaseapp.Fragments.FragmentReports;
 import com.example.firebaseapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,10 +43,10 @@ public class ActivityDashboard extends AppCompatActivity {
         BottomNavigationView navigationView = findViewById(R.id.dashboard_bom_navigation);
 
         //home fragment transaction (default fragment)
-        actionBar.setTitle("Home");
-        FragmentHome fragmentHome = new FragmentHome();
+        actionBar.setTitle("Check In");
+        FragmentCheckin fragmentCheckin = new FragmentCheckin();
         FragmentTransaction homeFragmentTransaction = getSupportFragmentManager().beginTransaction();
-        homeFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentHome,"");
+        homeFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentCheckin,"");
         homeFragmentTransaction.commit();
 
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -55,12 +54,12 @@ public class ActivityDashboard extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 //handle items clicks
                 switch(item.getItemId()){
-                    case R.id.navigation_home:
+                    case R.id.navigation_checkin:
                         //home fragment transaction
-                        actionBar.setTitle("Home");
-                        FragmentHome fragmentHome = new FragmentHome();
+                        actionBar.setTitle("Check In");
+                        FragmentCheckin fragmentCheckin = new FragmentCheckin();
                         FragmentTransaction homeFragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        homeFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentHome,"");
+                        homeFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentCheckin,"");
                         homeFragmentTransaction.commit();
                         return true;
                     case R.id.navigation_profile:
@@ -71,21 +70,13 @@ public class ActivityDashboard extends AppCompatActivity {
                         profileFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentProfile,"");
                         profileFragmentTransaction.commit();
                         return true;
-                    case R.id.navigation_users:
+                    case R.id.navigation_reports:
                         //users fragment transaction
-                        actionBar.setTitle("Users");
-                        FragmentUsers fragmentUsers = new FragmentUsers();
+                        actionBar.setTitle("Reports");
+                        FragmentReports fragmentReports = new FragmentReports();
                         FragmentTransaction usersFragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        usersFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentUsers,"");
+                        usersFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentReports,"");
                         usersFragmentTransaction.commit();
-                        return true;
-                    case R.id.navigation_chat:
-                        //chat fragment transaction
-                        actionBar.setTitle("Chat");
-                        FragmentChatList fragmentChat = new FragmentChatList();
-                        FragmentTransaction chatFragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        chatFragmentTransaction.replace(R.id.dashboard_frl_content, fragmentChat,"");
-                        chatFragmentTransaction.commit();
                         return true;
                 }
                 return false;

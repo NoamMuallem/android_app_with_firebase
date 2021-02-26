@@ -14,8 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FirebaseApp">
-        <activity android:name=".Activitys.ActivityChat"
-            android:theme="@style/AppThemeNo"></activity>
         <activity android:name=".Activitys.ActivityLogin" />
         <activity
             android:name=".Activitys.ActivityDashboard"
