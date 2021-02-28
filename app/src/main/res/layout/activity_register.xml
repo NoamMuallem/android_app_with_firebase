@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="REGISTER"
+        android:text="Sign Up"
         android:textColor="@color/colorBlack"
         android:textSize="25sp"
         android:gravity="center_horizontal" />
@@ -54,7 +54,7 @@
     <!--    Button: Register User-->
     <Button
         android:id="@+id/register_btn_submit"
-        android:text="REGISTER"
+        android:text="Sign Up"
         android:layout_marginTop="10dp"
         android:background="@color/colorPrimary"
         android:textColor="@color/colorWhite"

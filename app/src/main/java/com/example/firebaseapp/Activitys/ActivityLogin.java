@@ -57,7 +57,7 @@ public class ActivityLogin extends AppCompatActivity {
 
         //action bar and its action
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Login");
+        actionBar.setTitle("Sign In");
         //enable back button
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);

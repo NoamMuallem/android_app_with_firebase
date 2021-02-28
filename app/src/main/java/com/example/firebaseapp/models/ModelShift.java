@@ -1,5 +1,11 @@
 package com.example.firebaseapp.models;
+import android.util.Log;
+
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 
 public class ModelShift {
@@ -7,6 +13,13 @@ public class ModelShift {
     private Date ends;
     private long timeDifference;
     private static long totalTime = 0;
+
+    private long getTimeZoneDifference(){
+        Calendar mCalendar = new GregorianCalendar();
+        TimeZone mTimeZone = mCalendar.getTimeZone();
+        int mGMTOffset = mTimeZone.getRawOffset();
+        return TimeUnit.HOURS.convert(mGMTOffset, TimeUnit.MILLISECONDS);
+    }
 
     //empty constructor
     public ModelShift() {
@@ -33,7 +46,7 @@ public class ModelShift {
     public String getTotal(){
         //time differences ?
         Date total = new Date (this.timeDifference);
-        long hours = total.getHours()-2;
+        long hours = total.getHours() - getTimeZoneDifference();
         long minutes = total.getMinutes() % 60;
         String hoursStr = hours < 10 ? "0"+hours : hours+"";
         String minStr = minutes < 10 ? "0"+minutes : minutes+"";

@@ -5,10 +5,38 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.FragmentReports">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
+        <Button
+            android:id="@+id/reports_btn_pick_date"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:text="pick a date"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+        <TextView
+            android:layout_below="@id/reports_btn_pick_date"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:id="@+id/reports_tev_total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ScrollView
+            android:layout_below="@id/reports_tev_total"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/reports_lil_logs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"/>
+        </ScrollView>
+    </RelativeLayout>
 </FrameLayout>

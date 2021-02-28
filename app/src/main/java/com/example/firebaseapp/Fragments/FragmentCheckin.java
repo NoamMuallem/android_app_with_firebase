@@ -3,11 +3,9 @@ package com.example.firebaseapp.Fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,26 +13,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.firebaseapp.Callbacks.OnDataReceiveCallback;
-import com.example.firebaseapp.Consts.DBConsts;
-import com.example.firebaseapp.Consts.SPConst;
 import com.example.firebaseapp.R;
 import com.example.firebaseapp.utils.FirebaseManager;
 import com.example.firebaseapp.utils.SP;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentCheckin#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentCheckin extends Fragment implements OnDataReceiveCallback {
 
     private Button checkin_btn_checkin;
@@ -44,8 +33,8 @@ public class FragmentCheckin extends Fragment implements OnDataReceiveCallback {
     Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
-            if(!(SP.getInstance().getString(SPConst.checkin,"").equals(""))) {
-                long millis = System.currentTimeMillis() - new Date(Long.parseLong(SP.getInstance().getString(SPConst.checkin, ""))).getTime();
+            if(!(SP.getInstance().getString("checkin","").equals(""))) {
+                long millis = System.currentTimeMillis() - new Date(Long.parseLong(SP.getInstance().getString("checkin", ""))).getTime();
                 int seconds = (int) (millis / 1000);
                 int minutes = seconds / 60;
                 seconds = seconds % 60;
@@ -101,7 +90,7 @@ public class FragmentCheckin extends Fragment implements OnDataReceiveCallback {
             @Override
             public void onClick(View v) {
                 Date now = new Date();
-                if(SP.getInstance().getString(SPConst.checkin,"").equals("")){
+                if(SP.getInstance().getString("checkin","").equals("")){
                     //set new time stamp in user profile on firebase
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put("openClock",now.getTime());
@@ -110,7 +99,7 @@ public class FragmentCheckin extends Fragment implements OnDataReceiveCallback {
                     //add start timestamp and end timestamp to "userHistory in firebase"
                     //start timestamp : end timestamp
                     HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put(SP.getInstance().getString(SPConst.checkin,""),now.getTime());
+                    hashMap.put(SP.getInstance().getString("checkin",""),now.getTime());
                     FirebaseManager.getInstance().getUserHistoryRefrence().child(FirebaseManager.getInstance().getMAuth().getUid()).updateChildren(hashMap);
                     //clear time stamp in user profile - openClock:""
                     HashMap<String, Object> hashMapForUserProfile = new HashMap<>();
@@ -133,7 +122,7 @@ public class FragmentCheckin extends Fragment implements OnDataReceiveCallback {
     public void onPause() {
         super.onPause();
         //if there is a starting timestamp remove timer
-        if(!(SP.getInstance().getString(SPConst.checkin,"").equals(""))){
+        if(!(SP.getInstance().getString("checkin","").equals(""))){
             this.timerHandler.removeCallbacks(timerRunnable);
         }
     }
@@ -150,7 +139,7 @@ public class FragmentCheckin extends Fragment implements OnDataReceiveCallback {
         //received empty timestamp - did not started shift
         if(date.equals("")){
             this.checkin_txv_start_time.setText("");
-            this.checkin_btn_checkin.setText("check-in");
+            this.checkin_btn_checkin.setText("clock-in");
             //remove timer
             this.timerHandler.removeCallbacks(timerRunnable);
         }else{
@@ -158,10 +147,10 @@ public class FragmentCheckin extends Fragment implements OnDataReceiveCallback {
             SimpleDateFormat sdfDate = new SimpleDateFormat("dd/MM/YY HH:mm:ss");
             String strDate = sdfDate.format(new Date(Long.parseLong(date)));
             this.checkin_txv_start_time.setText(strDate);
-            this.checkin_btn_checkin.setText("check-out");
+            this.checkin_btn_checkin.setText("clock-out");
             //set timer
             this.timerHandler.postDelayed(this.timerRunnable, 0);
         }
-        SP.getInstance().putString(SPConst.checkin,date);
+        SP.getInstance().putString("checkin",date);
     }
 }

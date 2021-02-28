@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="LOGIN"
+        android:text="Sign In"
         android:textColor="@color/colorBlack"
         android:textSize="25sp"
         android:gravity="center_horizontal" />
@@ -56,7 +56,7 @@
             <!--    Button: Register User-->
             <Button
                 android:id="@+id/login_btn_submit"
-                android:text="Login"
+                android:text="Sign In"
                 android:background="@color/colorPrimary"
                 android:textColor="@color/colorWhite"
                 android:layout_below="@+id/login_txf_password"

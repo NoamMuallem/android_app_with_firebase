@@ -6,6 +6,7 @@ import com.example.firebaseapp.utils.FirebaseManager;
 import com.example.firebaseapp.utils.PermissionManager;
 import com.example.firebaseapp.utils.SP;
 
+
 //this class will be instantiated when app starts
 //it will initialize all utils and pass context to them
 public class App extends Application {

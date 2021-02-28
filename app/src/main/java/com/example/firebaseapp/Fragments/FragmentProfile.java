@@ -1,6 +1,5 @@
 package com.example.firebaseapp.Fragments;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -27,12 +25,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.firebaseapp.Activitys.ActivityMain;
-import com.example.firebaseapp.Consts.SPConst;
 import com.example.firebaseapp.R;
 import com.example.firebaseapp.models.ModelShift;
 import com.example.firebaseapp.utils.FirebaseManager;
@@ -42,16 +38,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
@@ -63,7 +53,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.firebaseapp.utils.PermissionManager.IMAGE_PICK_CAMERA_CODE;
 
 public class FragmentProfile extends Fragment {
     //views
@@ -137,7 +126,7 @@ public class FragmentProfile extends Fragment {
                     String image = "" + ds.child("image").getValue();
                     String cover = "" + ds.child("cover").getValue();
                     //saving to SP the check in value
-                    SP.getInstance().putString(SPConst.checkin,(String)ds.child("openClock").getValue().toString());
+                    SP.getInstance().putString("checkin",(String)ds.child("openClock").getValue().toString());
                     //set data
                     profile_lbl_user_name.setText(name);
                     profile_lbl_user_email.setText(email);
@@ -181,7 +170,7 @@ public class FragmentProfile extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 shifts = new ArrayList<>();
                 for(DataSnapshot ds : snapshot.getChildren()) {
-                    //create list of objects of starting date, end date and
+                    //create list of objects of starting date, end date
                     if(!ds.getKey().isEmpty() || !ds.getValue().toString().isEmpty()){
                         ModelShift shift = new ModelShift(ds.getKey(),ds.getValue().toString());
                         shifts.add(shift);
